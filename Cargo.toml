@@ -1,0 +1,13 @@
+[package]
+name = "statgrab"
+authors = [ "Adam Flott <adam@adamflott.com>" ]
+description = "Rust API to libstatgrab"
+version = "0.1.0"
+edition = "2021"
+repository = "https://github.com/adamflott/statgrab-rs"
+license = "MIT OR Apache-2.0"
+# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+
+[dependencies]
+libstatgrab-sys = "*"
+chrono = "*"
