@@ -385,10 +385,10 @@ impl SGHandle {
         convert_lsg_error(err)
     }
 
-    pub fn get_host_info(&self, maybe_entries: Option<usize>) -> HostInfo {
-        let mut c_entries = to_c_entries(maybe_entries);
+    pub fn get_host_info(&self) -> HostInfo {
+        let mut sz: u64 = 0;
         unsafe {
-            let general_stats = libstatgrab_sys::sg_get_host_info(&mut c_entries);
+            let general_stats = libstatgrab_sys::sg_get_host_info_r(&mut sz);
             let host_state = match (*general_stats).host_state {
                 libstatgrab_sys::sg_host_state_sg_physical_host => HostState::PhysicalHost,
                 libstatgrab_sys::sg_host_state_sg_virtual_machine => HostState::VirtualMachine,
@@ -412,10 +412,10 @@ impl SGHandle {
         }
     }
 
-    pub fn get_cpu_stats(&self, maybe_entries: Option<usize>) -> CPUStats {
-        let mut c_entries = to_c_entries(maybe_entries);
+    pub fn get_cpu_stats(&self) -> CPUStats {
+        let mut sz: u64 = 0;
         unsafe {
-            let cpu_stats = libstatgrab_sys::sg_get_cpu_stats(&mut c_entries);
+            let cpu_stats = libstatgrab_sys::sg_get_cpu_stats(&mut sz);
             CPUStats {
                 user: (*cpu_stats).user,
                 kernel: (*cpu_stats).kernel,
@@ -479,10 +479,10 @@ impl SGHandle {
         }
     }
 
-    pub fn get_mem_stats(&self, maybe_entries: Option<usize>) -> MemStats {
-        let mut c_entries = to_c_entries(maybe_entries);
+    pub fn get_mem_stats(&self) -> MemStats {
+        let mut sz: u64 = 0;
         unsafe {
-            let ms = libstatgrab_sys::sg_get_mem_stats_r(&mut c_entries);
+            let ms = libstatgrab_sys::sg_get_mem_stats_r(&mut sz);
             MemStats {
                 total: (*ms).total,
                 free: (*ms).free,
@@ -493,10 +493,10 @@ impl SGHandle {
         }
     }
 
-    pub fn get_load_stats(&self, maybe_entries: Option<usize>) -> LoadStats {
-        let mut c_entries = to_c_entries(maybe_entries);
+    pub fn get_load_stats(&self) -> LoadStats {
+        let mut sz: u64 = 0;
         unsafe {
-            let ms = libstatgrab_sys::sg_get_load_stats(&mut c_entries);
+            let ms = libstatgrab_sys::sg_get_load_stats_r(&mut sz);
             LoadStats {
                 min1: (*ms).min1,
                 min5: (*ms).min5,
@@ -506,10 +506,10 @@ impl SGHandle {
         }
     }
 
-    pub fn get_user_stats(&self, maybe_entries: Option<usize>) -> UserStats {
-        let mut c_entries = to_c_entries(maybe_entries);
+    pub fn get_user_stats(&self) -> UserStats {
+        let mut sz: u64 = 0;
         unsafe {
-            let us = libstatgrab_sys::sg_get_user_stats(&mut c_entries);
+            let us = libstatgrab_sys::sg_get_user_stats_r(&mut sz);
             UserStats {
                 login_name: std::ffi::CStr::from_ptr((*us).login_name).to_string_lossy().into_owned(),
                 record_id: std::ffi::CStr::from_ptr((*us).record_id).to_string_lossy().into_owned(),
@@ -523,10 +523,10 @@ impl SGHandle {
         }
     }
 
-    pub fn get_swap_stats(&self, maybe_entries: Option<usize>) -> SwapStats {
-        let mut c_entries = to_c_entries(maybe_entries);
+    pub fn get_swap_stats(&self) -> SwapStats {
+        let mut sz: u64 = 0;
         unsafe {
-            let ss = libstatgrab_sys::sg_get_swap_stats(&mut c_entries);
+            let ss = libstatgrab_sys::sg_get_swap_stats_r(&mut sz);
             SwapStats {
                 total: (*ss).total,
                 used: (*ss).used,
@@ -536,80 +536,103 @@ impl SGHandle {
         }
     }
 
-    pub fn get_fs_stats(&self, maybe_entries: Option<usize>) -> FilesystemStats {
-        let mut c_entries = to_c_entries(maybe_entries);
+    pub fn get_fs_stats(&self) -> Vec<FilesystemStats> {
+        let mut sz: u64 = 0;
+        let mut r = vec![];
         unsafe {
-            let fs = libstatgrab_sys::sg_get_fs_stats(&mut c_entries);
-            let device_type = match (*fs).device_type {
-                libstatgrab_sys::sg_fs_device_type_sg_fs_unknown => FilesystemDeviceType::Unknown,
-                libstatgrab_sys::sg_fs_device_type_sg_fs_regular => FilesystemDeviceType::Regular,
-                libstatgrab_sys::sg_fs_device_type_sg_fs_special => FilesystemDeviceType::Special,
-                libstatgrab_sys::sg_fs_device_type_sg_fs_loopback => FilesystemDeviceType::Loopback,
-                libstatgrab_sys::sg_fs_device_type_sg_fs_remote => FilesystemDeviceType::Remote,
-                libstatgrab_sys::sg_fs_device_type_sg_fs_local => FilesystemDeviceType::Local,
-                libstatgrab_sys::sg_fs_device_type_sg_fs_alltypes => FilesystemDeviceType::AllTypes,
-                _ => FilesystemDeviceType::Unknown,
-            };
-            FilesystemStats {
-                device_name: std::ffi::CStr::from_ptr((*fs).device_name).to_string_lossy().into_owned(),
-                device_canonical: std::ffi::CStr::from_ptr((*fs).device_canonical).to_string_lossy().into_owned(),
-                fs_type: std::ffi::CStr::from_ptr((*fs).fs_type).to_string_lossy().into_owned(),
-                mnt_point: std::ffi::CStr::from_ptr((*fs).mnt_point).to_string_lossy().into_owned(),
-                device_type,
-                size: (*fs).size,
-                used: (*fs).used,
-                free: (*fs).free,
-                avail: (*fs).avail,
-                total_inodes: (*fs).total_inodes,
-                used_inodes: (*fs).used_inodes,
-                free_inodes: (*fs).free_inodes,
-                avail_inodes: (*fs).avail_inodes,
-                io_size: (*fs).io_size,
-                block_size: (*fs).block_size,
-                total_blocks: (*fs).total_blocks,
-                free_blocks: (*fs).free_blocks,
-                used_blocks: (*fs).used_blocks,
-                avail_blocks: (*fs).avail_blocks,
-                systime: chrono::Duration::seconds((*fs).systime),
+            let fs_ptr = libstatgrab_sys::sg_get_fs_stats_r(&mut sz);
+            let fss = std::slice::from_raw_parts(fs_ptr, sz as usize);
+
+            for fs in fss {
+                let device_type = match (*fs).device_type {
+                    libstatgrab_sys::sg_fs_device_type_sg_fs_unknown => FilesystemDeviceType::Unknown,
+                    libstatgrab_sys::sg_fs_device_type_sg_fs_regular => FilesystemDeviceType::Regular,
+                    libstatgrab_sys::sg_fs_device_type_sg_fs_special => FilesystemDeviceType::Special,
+                    libstatgrab_sys::sg_fs_device_type_sg_fs_loopback => FilesystemDeviceType::Loopback,
+                    libstatgrab_sys::sg_fs_device_type_sg_fs_remote => FilesystemDeviceType::Remote,
+                    libstatgrab_sys::sg_fs_device_type_sg_fs_local => FilesystemDeviceType::Local,
+                    libstatgrab_sys::sg_fs_device_type_sg_fs_alltypes => FilesystemDeviceType::AllTypes,
+                    _ => FilesystemDeviceType::Unknown,
+                };
+
+                r.push(FilesystemStats {
+                    device_name: std::ffi::CStr::from_ptr((*fs).device_name).to_string_lossy().into_owned(),
+                    device_canonical: std::ffi::CStr::from_ptr((*fs).device_canonical).to_string_lossy().into_owned(),
+                    fs_type: std::ffi::CStr::from_ptr((*fs).fs_type).to_string_lossy().into_owned(),
+                    mnt_point: std::ffi::CStr::from_ptr((*fs).mnt_point).to_string_lossy().into_owned(),
+                    device_type,
+                    size: (*fs).size,
+                    used: (*fs).used,
+                    free: (*fs).free,
+                    avail: (*fs).avail,
+                    total_inodes: (*fs).total_inodes,
+                    used_inodes: (*fs).used_inodes,
+                    free_inodes: (*fs).free_inodes,
+                    avail_inodes: (*fs).avail_inodes,
+                    io_size: (*fs).io_size,
+                    block_size: (*fs).block_size,
+                    total_blocks: (*fs).total_blocks,
+                    free_blocks: (*fs).free_blocks,
+                    used_blocks: (*fs).used_blocks,
+                    avail_blocks: (*fs).avail_blocks,
+                    systime: chrono::Duration::seconds((*fs).systime),
+                });
             }
         }
+        r
     }
 
-    pub fn get_disk_io_stats(&self, maybe_entries: Option<usize>) -> DiskIOStats {
-        let mut c_entries = to_c_entries(maybe_entries);
+    pub fn get_disk_io_stats(&self) -> Vec<DiskIOStats> {
+        let mut sz: u64 = 0;
+        let mut r = vec![];
         unsafe {
-            let ds = libstatgrab_sys::sg_get_disk_io_stats(&mut c_entries);
-            DiskIOStats {
-                disk_name: std::ffi::CStr::from_ptr((*ds).disk_name).to_string_lossy().into_owned(),
-                read_bytes: (*ds).read_bytes,
-                write_bytes: (*ds).write_bytes,
-                systime: chrono::Duration::seconds((*ds).systime),
+            let ds_ptr = libstatgrab_sys::sg_get_disk_io_stats_r(&mut sz);
+            let dss = std::slice::from_raw_parts(ds_ptr, sz as usize);
+
+            for ds in dss {
+                r.push(DiskIOStats {
+                    disk_name: std::ffi::CStr::from_ptr((*ds).disk_name).to_string_lossy().into_owned(),
+                    read_bytes: (*ds).read_bytes,
+                    write_bytes: (*ds).write_bytes,
+                    systime: chrono::Duration::seconds((*ds).systime),
+                });
             }
         }
+        r
     }
 
-    pub fn get_network_io_stats(&self, maybe_entries: Option<usize>) -> NetworkIOStats {
-        let mut c_entries = to_c_entries(maybe_entries);
+    pub fn get_network_io_stats(&self) -> Vec<NetworkIOStats> {
+        let mut sz: u64 = 0;
+        let mut r = vec![];
         unsafe {
-            let ns = libstatgrab_sys::sg_get_network_io_stats(&mut c_entries);
-            NetworkIOStats {
-                interface_name: std::ffi::CStr::from_ptr((*ns).interface_name).to_string_lossy().into_owned(),
-                tx: (*ns).tx,
-                rx: (*ns).rx,
-                ipackets: (*ns).ipackets,
-                opackets: (*ns).opackets,
-                ierrors: (*ns).ierrors,
-                oerrors: (*ns).oerrors,
-                collisions: (*ns).collisions,
-                systime: chrono::Duration::seconds((*ns).systime),
+            let ns_ptr = libstatgrab_sys::sg_get_network_io_stats_r(&mut sz);
+            let nss = std::slice::from_raw_parts(ns_ptr, sz as usize);
+
+            for ns in nss {
+                r.push(NetworkIOStats {
+                    interface_name: std::ffi::CStr::from_ptr((*ns).interface_name).to_string_lossy().into_owned(),
+                    tx: (*ns).tx,
+                    rx: (*ns).rx,
+                    ipackets: (*ns).ipackets,
+                    opackets: (*ns).opackets,
+                    ierrors: (*ns).ierrors,
+                    oerrors: (*ns).oerrors,
+                    collisions: (*ns).collisions,
+                    systime: chrono::Duration::seconds((*ns).systime),
+                });
             }
         }
+        r
     }
 
-    pub fn get_network_iface_stats(&self, maybe_entries: Option<usize>) -> NetworkIfaceStats {
-        let mut c_entries = to_c_entries(maybe_entries);
+    pub fn get_network_iface_stats(&self) -> Vec<NetworkIfaceStats> {
+        let mut sz: u64 = 0;
+        let mut r = vec![];
         unsafe {
-            let ns = libstatgrab_sys::sg_get_network_iface_stats(&mut c_entries);
+            let ns_ptr = libstatgrab_sys::sg_get_network_iface_stats_r(&mut sz);
+            let nss = std::slice::from_raw_parts(ns_ptr, sz as usize);
+
+            for ns in nss {
             let duplex = match (*ns).duplex {
                 libstatgrab_sys::sg_iface_duplex_SG_IFACE_DUPLEX_FULL => IfaceDuplexType::Full,
                 libstatgrab_sys::sg_iface_duplex_SG_IFACE_DUPLEX_HALF => IfaceDuplexType::Half,
@@ -621,21 +644,23 @@ impl SGHandle {
                 _ => IfaceUpdownType::Down,
             };
 
-            NetworkIfaceStats {
+            r.push(NetworkIfaceStats {
                 interface_name: std::ffi::CStr::from_ptr((*ns).interface_name).to_string_lossy().into_owned(),
                 speed: (*ns).speed,
                 factor: (*ns).factor,
                 duplex,
                 up,
                 systime: chrono::Duration::seconds((*ns).systime),
+            });
             }
         }
+        r
     }
 
-    pub fn get_page_stats(&self, maybe_entries: Option<usize>) -> PageStats {
-        let mut c_entries = to_c_entries(maybe_entries);
+    pub fn get_page_stats(&self) -> PageStats {
+        let mut sz: u64 = 0;
         unsafe {
-            let ps = libstatgrab_sys::sg_get_page_stats(&mut c_entries);
+            let ps = libstatgrab_sys::sg_get_page_stats_r(&mut sz);
             PageStats {
                 pages_pagein: (*ps).pages_pagein,
                 pages_pageout: (*ps).pages_pageout,
@@ -644,10 +669,14 @@ impl SGHandle {
         }
     }
 
-    pub fn get_process_stats(&self, maybe_entries: Option<usize>) -> ProcessStats {
-        let mut c_entries = to_c_entries(maybe_entries);
+    pub fn get_process_stats(&self) -> Vec<ProcessStats> {
+        let mut sz: u64 = 0;
+        let mut r = vec![];
         unsafe {
-            let ps = libstatgrab_sys::sg_get_process_stats(&mut c_entries);
+            let ps_ptr = libstatgrab_sys::sg_get_process_stats_r(&mut sz);
+            let pss = std::slice::from_raw_parts(ps_ptr, sz as usize);
+
+            for ps in pss {
             let state = match (*ps).state {
                 libstatgrab_sys::sg_process_state_SG_PROCESS_STATE_RUNNING => ProcessState::Running,
                 libstatgrab_sys::sg_process_state_SG_PROCESS_STATE_SLEEPING => ProcessState::Sleeping,
@@ -656,7 +685,7 @@ impl SGHandle {
                 libstatgrab_sys::sg_process_state_SG_PROCESS_STATE_UNKNOWN => ProcessState::Unknown,
                 _ => ProcessState::Unknown,
             };
-            ProcessStats {
+            r.push(ProcessStats {
                 process_name: std::ffi::CStr::from_ptr((*ps).process_name).to_string_lossy().into_owned(),
                 proctitle: std::ffi::CStr::from_ptr((*ps).proctitle).to_string_lossy().into_owned(),
                 pid: (*ps).pid,
@@ -678,8 +707,10 @@ impl SGHandle {
                 nice: (*ps).nice,
                 state,
                 systime: chrono::Duration::seconds((*ps).systime),
+            });
             }
         }
+        r
     }
 
     pub fn get_process_count_of(&self, source: ProcessCountSource) -> ProcessCount {
@@ -712,7 +743,7 @@ mod tests {
     fn host_info() {
         match init(true) {
             Ok(h) => {
-                let hi = h.get_host_info(None);
+                let hi = h.get_host_info();
                 assert_eq!(&hi.os_name, "Linux");
             }
             Err(e) => panic!("{:?}", e),
@@ -723,7 +754,7 @@ mod tests {
     fn cpu_stats() {
         match init(true) {
             Ok(h) => {
-                let cs = h.get_cpu_stats(None);
+                let cs = h.get_cpu_stats();
                 assert!(cs.user >= 0);
             }
             Err(e) => panic!("{:?}", e),
@@ -734,7 +765,7 @@ mod tests {
     fn mem_stats() {
         match init(true) {
             Ok(h) => {
-                let cs = h.get_mem_stats(None);
+                let cs = h.get_mem_stats();
                 assert!(cs.total > 0);
             }
             Err(e) => panic!("{:?}", e),
@@ -745,7 +776,7 @@ mod tests {
     fn load_stats() {
         match init(true) {
             Ok(h) => {
-                let cs = h.get_load_stats(None);
+                let cs = h.get_load_stats();
                 assert!(cs.min5 > 0.0);
             }
             Err(e) => panic!("{:?}", e),
