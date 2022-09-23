@@ -2,7 +2,7 @@
 name = "statgrab"
 authors = [ "Adam Flott <adam@adamflott.com>" ]
 description = "Rust API to libstatgrab"
-version = "0.1.0"
+version = "0.9.0"
 edition = "2021"
 repository = "https://github.com/adamflott/statgrab-rs"
 license = "MIT OR Apache-2.0"
