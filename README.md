@@ -1,4 +1,4 @@
-# statgrab-rs
+# statgrab
 
 [![Crates.io](https://img.shields.io/crates/v/statgrab-rs.svg)](https://crates.io/crates/statgrab-rs)
 [![Docs.rs](https://docs.rs/statgrab-rs/badge.svg)](https://docs.rs/statgrab-rs)
@@ -15,7 +15,7 @@ for accessing system statistics).
 
 * Install the rust toolchain in order to have cargo installed by following
   [this](https://www.rust-lang.org/tools/install) guide.
-* run `cargo install statgrab-rs`
+* run `cargo install statgrab`
 
 ## License
 
