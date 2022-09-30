@@ -633,25 +633,25 @@ impl SGHandle {
             let nss = std::slice::from_raw_parts(ns_ptr, sz as usize);
 
             for ns in nss {
-            let duplex = match (*ns).duplex {
-                libstatgrab_sys::sg_iface_duplex_SG_IFACE_DUPLEX_FULL => IfaceDuplexType::Full,
-                libstatgrab_sys::sg_iface_duplex_SG_IFACE_DUPLEX_HALF => IfaceDuplexType::Half,
-                _ => IfaceDuplexType::Unknown,
-            };
-            let up = match (*ns).up {
-                libstatgrab_sys::sg_iface_updown_SG_IFACE_DOWN => IfaceUpdownType::Down,
-                libstatgrab_sys::sg_iface_updown_SG_IFACE_UP => IfaceUpdownType::Up,
-                _ => IfaceUpdownType::Down,
-            };
+                let duplex = match (*ns).duplex {
+                    libstatgrab_sys::sg_iface_duplex_SG_IFACE_DUPLEX_FULL => IfaceDuplexType::Full,
+                    libstatgrab_sys::sg_iface_duplex_SG_IFACE_DUPLEX_HALF => IfaceDuplexType::Half,
+                    _ => IfaceDuplexType::Unknown,
+                };
+                let up = match (*ns).up {
+                    libstatgrab_sys::sg_iface_updown_SG_IFACE_DOWN => IfaceUpdownType::Down,
+                    libstatgrab_sys::sg_iface_updown_SG_IFACE_UP => IfaceUpdownType::Up,
+                    _ => IfaceUpdownType::Down,
+                };
 
-            r.push(NetworkIfaceStats {
-                interface_name: std::ffi::CStr::from_ptr((*ns).interface_name).to_string_lossy().into_owned(),
-                speed: (*ns).speed,
-                factor: (*ns).factor,
-                duplex,
-                up,
-                systime: chrono::Duration::seconds((*ns).systime),
-            });
+                r.push(NetworkIfaceStats {
+                    interface_name: std::ffi::CStr::from_ptr((*ns).interface_name).to_string_lossy().into_owned(),
+                    speed: (*ns).speed,
+                    factor: (*ns).factor,
+                    duplex,
+                    up,
+                    systime: chrono::Duration::seconds((*ns).systime),
+                });
             }
         }
         r
@@ -677,37 +677,37 @@ impl SGHandle {
             let pss = std::slice::from_raw_parts(ps_ptr, sz as usize);
 
             for ps in pss {
-            let state = match (*ps).state {
-                libstatgrab_sys::sg_process_state_SG_PROCESS_STATE_RUNNING => ProcessState::Running,
-                libstatgrab_sys::sg_process_state_SG_PROCESS_STATE_SLEEPING => ProcessState::Sleeping,
-                libstatgrab_sys::sg_process_state_SG_PROCESS_STATE_STOPPED => ProcessState::Stopped,
-                libstatgrab_sys::sg_process_state_SG_PROCESS_STATE_ZOMBIE => ProcessState::Zombie,
-                libstatgrab_sys::sg_process_state_SG_PROCESS_STATE_UNKNOWN => ProcessState::Unknown,
-                _ => ProcessState::Unknown,
-            };
-            r.push(ProcessStats {
-                process_name: std::ffi::CStr::from_ptr((*ps).process_name).to_string_lossy().into_owned(),
-                proctitle: std::ffi::CStr::from_ptr((*ps).proctitle).to_string_lossy().into_owned(),
-                pid: (*ps).pid,
-                parent: (*ps).parent,
-                pgid: (*ps).pgid,
-                sessid: (*ps).sessid,
-                uid: (*ps).uid,
-                euid: (*ps).euid,
-                gid: (*ps).gid,
-                egid: (*ps).egid,
-                context_switches: (*ps).context_switches,
-                voluntary_context_switches: (*ps).voluntary_context_switches,
-                involuntary_context_switches: (*ps).involuntary_context_switches,
-                proc_size: (*ps).proc_size,
-                proc_resident: (*ps).proc_resident,
-                start_time: chrono::Duration::seconds((*ps).start_time),
-                time_spent: chrono::Duration::seconds((*ps).time_spent),
-                cpu_percent: (*ps).cpu_percent,
-                nice: (*ps).nice,
-                state,
-                systime: chrono::Duration::seconds((*ps).systime),
-            });
+                let state = match (*ps).state {
+                    libstatgrab_sys::sg_process_state_SG_PROCESS_STATE_RUNNING => ProcessState::Running,
+                    libstatgrab_sys::sg_process_state_SG_PROCESS_STATE_SLEEPING => ProcessState::Sleeping,
+                    libstatgrab_sys::sg_process_state_SG_PROCESS_STATE_STOPPED => ProcessState::Stopped,
+                    libstatgrab_sys::sg_process_state_SG_PROCESS_STATE_ZOMBIE => ProcessState::Zombie,
+                    libstatgrab_sys::sg_process_state_SG_PROCESS_STATE_UNKNOWN => ProcessState::Unknown,
+                    _ => ProcessState::Unknown,
+                };
+                r.push(ProcessStats {
+                    process_name: std::ffi::CStr::from_ptr((*ps).process_name).to_string_lossy().into_owned(),
+                    proctitle: std::ffi::CStr::from_ptr((*ps).proctitle).to_string_lossy().into_owned(),
+                    pid: (*ps).pid,
+                    parent: (*ps).parent,
+                    pgid: (*ps).pgid,
+                    sessid: (*ps).sessid,
+                    uid: (*ps).uid,
+                    euid: (*ps).euid,
+                    gid: (*ps).gid,
+                    egid: (*ps).egid,
+                    context_switches: (*ps).context_switches,
+                    voluntary_context_switches: (*ps).voluntary_context_switches,
+                    involuntary_context_switches: (*ps).involuntary_context_switches,
+                    proc_size: (*ps).proc_size,
+                    proc_resident: (*ps).proc_resident,
+                    start_time: chrono::Duration::seconds((*ps).start_time),
+                    time_spent: chrono::Duration::seconds((*ps).time_spent),
+                    cpu_percent: (*ps).cpu_percent,
+                    nice: (*ps).nice,
+                    state,
+                    systime: chrono::Duration::seconds((*ps).systime),
+                });
             }
         }
         r
