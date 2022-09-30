@@ -10,4 +10,4 @@ license = "MIT OR Apache-2.0"
 
 [dependencies]
 libstatgrab-sys = "1.0"
-chrono = "0.4"
+chrono = "0.4.22"
