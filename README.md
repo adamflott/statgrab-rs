@@ -1,7 +1,7 @@
 # statgrab
 
-[![Crates.io](https://img.shields.io/crates/v/statgrab-rs.svg)](https://crates.io/crates/statgrab-rs)
-[![Docs.rs](https://docs.rs/statgrab-rs/badge.svg)](https://docs.rs/statgrab-rs)
+[![Crates.io](https://img.shields.io/crates/v/statgrab.svg)](https://crates.io/crates/statgrab)
+[![Docs.rs](https://docs.rs/statgrab/badge.svg)](https://docs.rs/statgrab)
 [![CI](https://github.com/adamflott/statgrab-rs/workflows/CI/badge.svg)](https://github.com/adamflott/statgrab-rs/actions)
 
 ## About
