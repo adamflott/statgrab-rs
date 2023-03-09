@@ -139,7 +139,7 @@ pub struct LoadStats {
 pub struct UserStats {
     pub login_name: String,
     pub record_id: String,
-    pub record_id_size: u64,
+    pub record_id_size: usize,
     pub device: String,
     pub hostname: String,
     pub pid: i32, // TODO check if there is some appropriate for pid_t,
@@ -364,7 +364,7 @@ pub fn init(ignore_init_errors: bool) -> Result<SGHandle, SGError> {
     }
 }
 
-fn to_c_entries(maybe_entries: Option<usize>) -> u64 {
+fn to_c_entries(maybe_entries: Option<usize>) -> usize {
     maybe_entries.map_or(0, |v| v.try_into().unwrap())
 }
 
@@ -386,7 +386,7 @@ impl SGHandle {
     }
 
     pub fn get_host_info(&self) -> HostInfo {
-        let mut sz: u64 = 0;
+        let mut sz: usize = 0;
         unsafe {
             let general_stats = libstatgrab_sys::sg_get_host_info_r(&mut sz);
             let host_state = match (*general_stats).host_state {
@@ -413,7 +413,7 @@ impl SGHandle {
     }
 
     pub fn get_cpu_stats(&self) -> CPUStats {
-        let mut sz: u64 = 0;
+        let mut sz: usize = 0;
         unsafe {
             let cpu_stats = libstatgrab_sys::sg_get_cpu_stats(&mut sz);
             CPUStats {
@@ -480,7 +480,7 @@ impl SGHandle {
     }
 
     pub fn get_mem_stats(&self) -> MemStats {
-        let mut sz: u64 = 0;
+        let mut sz: usize = 0;
         unsafe {
             let ms = libstatgrab_sys::sg_get_mem_stats_r(&mut sz);
             MemStats {
@@ -494,7 +494,7 @@ impl SGHandle {
     }
 
     pub fn get_load_stats(&self) -> LoadStats {
-        let mut sz: u64 = 0;
+        let mut sz: usize = 0;
         unsafe {
             let ms = libstatgrab_sys::sg_get_load_stats_r(&mut sz);
             LoadStats {
@@ -507,7 +507,7 @@ impl SGHandle {
     }
 
     pub fn get_user_stats(&self) -> UserStats {
-        let mut sz: u64 = 0;
+        let mut sz: usize = 0;
         unsafe {
             let us = libstatgrab_sys::sg_get_user_stats_r(&mut sz);
             UserStats {
@@ -524,7 +524,7 @@ impl SGHandle {
     }
 
     pub fn get_swap_stats(&self) -> SwapStats {
-        let mut sz: u64 = 0;
+        let mut sz: usize = 0;
         unsafe {
             let ss = libstatgrab_sys::sg_get_swap_stats_r(&mut sz);
             SwapStats {
@@ -537,7 +537,7 @@ impl SGHandle {
     }
 
     pub fn get_fs_stats(&self) -> Vec<FilesystemStats> {
-        let mut sz: u64 = 0;
+        let mut sz: usize = 0;
         let mut r = vec![];
         unsafe {
             let fs_ptr = libstatgrab_sys::sg_get_fs_stats_r(&mut sz);
@@ -583,7 +583,7 @@ impl SGHandle {
     }
 
     pub fn get_disk_io_stats(&self) -> Vec<DiskIOStats> {
-        let mut sz: u64 = 0;
+        let mut sz: usize = 0;
         let mut r = vec![];
         unsafe {
             let ds_ptr = libstatgrab_sys::sg_get_disk_io_stats_r(&mut sz);
@@ -602,7 +602,7 @@ impl SGHandle {
     }
 
     pub fn get_network_io_stats(&self) -> Vec<NetworkIOStats> {
-        let mut sz: u64 = 0;
+        let mut sz: usize = 0;
         let mut r = vec![];
         unsafe {
             let ns_ptr = libstatgrab_sys::sg_get_network_io_stats_r(&mut sz);
@@ -626,7 +626,7 @@ impl SGHandle {
     }
 
     pub fn get_network_iface_stats(&self) -> Vec<NetworkIfaceStats> {
-        let mut sz: u64 = 0;
+        let mut sz: usize = 0;
         let mut r = vec![];
         unsafe {
             let ns_ptr = libstatgrab_sys::sg_get_network_iface_stats_r(&mut sz);
@@ -658,7 +658,7 @@ impl SGHandle {
     }
 
     pub fn get_page_stats(&self) -> PageStats {
-        let mut sz: u64 = 0;
+        let mut sz: usize = 0;
         unsafe {
             let ps = libstatgrab_sys::sg_get_page_stats_r(&mut sz);
             PageStats {
@@ -670,7 +670,7 @@ impl SGHandle {
     }
 
     pub fn get_process_stats(&self) -> Vec<ProcessStats> {
-        let mut sz: u64 = 0;
+        let mut sz: usize = 0;
         let mut r = vec![];
         unsafe {
             let ps_ptr = libstatgrab_sys::sg_get_process_stats_r(&mut sz);
