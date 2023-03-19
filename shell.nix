@@ -3,6 +3,7 @@ let
   pkgs = import (fetchTarball("channel:nixpkgs-unstable")) {};
 in pkgs.clangStdenv.mkDerivation {
   name = "statgrab";
-  buildInputs = [ pkgs.cargo pkgs.rustc pkgs.libstatgrab pkgs.libclang ];
+  buildInputs = [ pkgs.cargo pkgs.rustc pkgs.libstatgrab pkgs.libclang
+  pkgs.clippy ];
   LIBCLANG_PATH = "${pkgs.llvmPackages_11.libclang.lib}/lib";
 }

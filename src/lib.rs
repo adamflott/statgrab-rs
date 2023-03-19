@@ -365,7 +365,7 @@ pub fn init(ignore_init_errors: bool) -> Result<SGHandle, SGError> {
 }
 
 fn to_c_entries(maybe_entries: Option<usize>) -> usize {
-    maybe_entries.map_or(0, |v| v.try_into().unwrap())
+    maybe_entries.map_or(0, |v| v)
 }
 
 impl Drop for SGHandle {
@@ -541,10 +541,10 @@ impl SGHandle {
         let mut r = vec![];
         unsafe {
             let fs_ptr = libstatgrab_sys::sg_get_fs_stats_r(&mut sz);
-            let fss = std::slice::from_raw_parts(fs_ptr, sz as usize);
+            let fss = std::slice::from_raw_parts(fs_ptr, sz);
 
             for fs in fss {
-                let device_type = match (*fs).device_type {
+                let device_type = match (fs).device_type {
                     libstatgrab_sys::sg_fs_device_type_sg_fs_unknown => FilesystemDeviceType::Unknown,
                     libstatgrab_sys::sg_fs_device_type_sg_fs_regular => FilesystemDeviceType::Regular,
                     libstatgrab_sys::sg_fs_device_type_sg_fs_special => FilesystemDeviceType::Special,
@@ -556,26 +556,26 @@ impl SGHandle {
                 };
 
                 r.push(FilesystemStats {
-                    device_name: std::ffi::CStr::from_ptr((*fs).device_name).to_string_lossy().into_owned(),
-                    device_canonical: std::ffi::CStr::from_ptr((*fs).device_canonical).to_string_lossy().into_owned(),
-                    fs_type: std::ffi::CStr::from_ptr((*fs).fs_type).to_string_lossy().into_owned(),
-                    mnt_point: std::ffi::CStr::from_ptr((*fs).mnt_point).to_string_lossy().into_owned(),
+                    device_name: std::ffi::CStr::from_ptr((fs).device_name).to_string_lossy().into_owned(),
+                    device_canonical: std::ffi::CStr::from_ptr((fs).device_canonical).to_string_lossy().into_owned(),
+                    fs_type: std::ffi::CStr::from_ptr((fs).fs_type).to_string_lossy().into_owned(),
+                    mnt_point: std::ffi::CStr::from_ptr((fs).mnt_point).to_string_lossy().into_owned(),
                     device_type,
-                    size: (*fs).size,
-                    used: (*fs).used,
-                    free: (*fs).free,
-                    avail: (*fs).avail,
-                    total_inodes: (*fs).total_inodes,
-                    used_inodes: (*fs).used_inodes,
-                    free_inodes: (*fs).free_inodes,
-                    avail_inodes: (*fs).avail_inodes,
-                    io_size: (*fs).io_size,
-                    block_size: (*fs).block_size,
-                    total_blocks: (*fs).total_blocks,
-                    free_blocks: (*fs).free_blocks,
-                    used_blocks: (*fs).used_blocks,
-                    avail_blocks: (*fs).avail_blocks,
-                    systime: chrono::Duration::seconds((*fs).systime),
+                    size: (fs).size,
+                    used: (fs).used,
+                    free: (fs).free,
+                    avail: (fs).avail,
+                    total_inodes: (fs).total_inodes,
+                    used_inodes: (fs).used_inodes,
+                    free_inodes: (fs).free_inodes,
+                    avail_inodes: (fs).avail_inodes,
+                    io_size: (fs).io_size,
+                    block_size: (fs).block_size,
+                    total_blocks: (fs).total_blocks,
+                    free_blocks: (fs).free_blocks,
+                    used_blocks: (fs).used_blocks,
+                    avail_blocks: (fs).avail_blocks,
+                    systime: chrono::Duration::seconds((fs).systime),
                 });
             }
         }
@@ -587,14 +587,14 @@ impl SGHandle {
         let mut r = vec![];
         unsafe {
             let ds_ptr = libstatgrab_sys::sg_get_disk_io_stats_r(&mut sz);
-            let dss = std::slice::from_raw_parts(ds_ptr, sz as usize);
+            let dss = std::slice::from_raw_parts(ds_ptr, sz);
 
             for ds in dss {
                 r.push(DiskIOStats {
-                    disk_name: std::ffi::CStr::from_ptr((*ds).disk_name).to_string_lossy().into_owned(),
-                    read_bytes: (*ds).read_bytes,
-                    write_bytes: (*ds).write_bytes,
-                    systime: chrono::Duration::seconds((*ds).systime),
+                    disk_name: std::ffi::CStr::from_ptr((ds).disk_name).to_string_lossy().into_owned(),
+                    read_bytes: (ds).read_bytes,
+                    write_bytes: (ds).write_bytes,
+                    systime: chrono::Duration::seconds((ds).systime),
                 });
             }
         }
@@ -606,19 +606,19 @@ impl SGHandle {
         let mut r = vec![];
         unsafe {
             let ns_ptr = libstatgrab_sys::sg_get_network_io_stats_r(&mut sz);
-            let nss = std::slice::from_raw_parts(ns_ptr, sz as usize);
+            let nss = std::slice::from_raw_parts(ns_ptr, sz);
 
             for ns in nss {
                 r.push(NetworkIOStats {
-                    interface_name: std::ffi::CStr::from_ptr((*ns).interface_name).to_string_lossy().into_owned(),
-                    tx: (*ns).tx,
-                    rx: (*ns).rx,
-                    ipackets: (*ns).ipackets,
-                    opackets: (*ns).opackets,
-                    ierrors: (*ns).ierrors,
-                    oerrors: (*ns).oerrors,
-                    collisions: (*ns).collisions,
-                    systime: chrono::Duration::seconds((*ns).systime),
+                    interface_name: std::ffi::CStr::from_ptr((ns).interface_name).to_string_lossy().into_owned(),
+                    tx: (ns).tx,
+                    rx: (ns).rx,
+                    ipackets: (ns).ipackets,
+                    opackets: (ns).opackets,
+                    ierrors: (ns).ierrors,
+                    oerrors: (ns).oerrors,
+                    collisions: (ns).collisions,
+                    systime: chrono::Duration::seconds((ns).systime),
                 });
             }
         }
@@ -630,27 +630,27 @@ impl SGHandle {
         let mut r = vec![];
         unsafe {
             let ns_ptr = libstatgrab_sys::sg_get_network_iface_stats_r(&mut sz);
-            let nss = std::slice::from_raw_parts(ns_ptr, sz as usize);
+            let nss = std::slice::from_raw_parts(ns_ptr, sz);
 
             for ns in nss {
-                let duplex = match (*ns).duplex {
+                let duplex = match (ns).duplex {
                     libstatgrab_sys::sg_iface_duplex_SG_IFACE_DUPLEX_FULL => IfaceDuplexType::Full,
                     libstatgrab_sys::sg_iface_duplex_SG_IFACE_DUPLEX_HALF => IfaceDuplexType::Half,
                     _ => IfaceDuplexType::Unknown,
                 };
-                let up = match (*ns).up {
+                let up = match (ns).up {
                     libstatgrab_sys::sg_iface_updown_SG_IFACE_DOWN => IfaceUpdownType::Down,
                     libstatgrab_sys::sg_iface_updown_SG_IFACE_UP => IfaceUpdownType::Up,
                     _ => IfaceUpdownType::Down,
                 };
 
                 r.push(NetworkIfaceStats {
-                    interface_name: std::ffi::CStr::from_ptr((*ns).interface_name).to_string_lossy().into_owned(),
-                    speed: (*ns).speed,
-                    factor: (*ns).factor,
+                    interface_name: std::ffi::CStr::from_ptr((ns).interface_name).to_string_lossy().into_owned(),
+                    speed: (ns).speed,
+                    factor: (ns).factor,
                     duplex,
                     up,
-                    systime: chrono::Duration::seconds((*ns).systime),
+                    systime: chrono::Duration::seconds((ns).systime),
                 });
             }
         }
@@ -674,10 +674,10 @@ impl SGHandle {
         let mut r = vec![];
         unsafe {
             let ps_ptr = libstatgrab_sys::sg_get_process_stats_r(&mut sz);
-            let pss = std::slice::from_raw_parts(ps_ptr, sz as usize);
+            let pss = std::slice::from_raw_parts(ps_ptr, sz);
 
             for ps in pss {
-                let state = match (*ps).state {
+                let state = match (ps).state {
                     libstatgrab_sys::sg_process_state_SG_PROCESS_STATE_RUNNING => ProcessState::Running,
                     libstatgrab_sys::sg_process_state_SG_PROCESS_STATE_SLEEPING => ProcessState::Sleeping,
                     libstatgrab_sys::sg_process_state_SG_PROCESS_STATE_STOPPED => ProcessState::Stopped,
@@ -686,27 +686,27 @@ impl SGHandle {
                     _ => ProcessState::Unknown,
                 };
                 r.push(ProcessStats {
-                    process_name: std::ffi::CStr::from_ptr((*ps).process_name).to_string_lossy().into_owned(),
-                    proctitle: std::ffi::CStr::from_ptr((*ps).proctitle).to_string_lossy().into_owned(),
-                    pid: (*ps).pid,
-                    parent: (*ps).parent,
-                    pgid: (*ps).pgid,
-                    sessid: (*ps).sessid,
-                    uid: (*ps).uid,
-                    euid: (*ps).euid,
-                    gid: (*ps).gid,
-                    egid: (*ps).egid,
-                    context_switches: (*ps).context_switches,
-                    voluntary_context_switches: (*ps).voluntary_context_switches,
-                    involuntary_context_switches: (*ps).involuntary_context_switches,
-                    proc_size: (*ps).proc_size,
-                    proc_resident: (*ps).proc_resident,
-                    start_time: chrono::Duration::seconds((*ps).start_time),
-                    time_spent: chrono::Duration::seconds((*ps).time_spent),
-                    cpu_percent: (*ps).cpu_percent,
-                    nice: (*ps).nice,
+                    process_name: std::ffi::CStr::from_ptr((ps).process_name).to_string_lossy().into_owned(),
+                    proctitle: std::ffi::CStr::from_ptr((ps).proctitle).to_string_lossy().into_owned(),
+                    pid: (ps).pid,
+                    parent: (ps).parent,
+                    pgid: (ps).pgid,
+                    sessid: (ps).sessid,
+                    uid: (ps).uid,
+                    euid: (ps).euid,
+                    gid: (ps).gid,
+                    egid: (ps).egid,
+                    context_switches: (ps).context_switches,
+                    voluntary_context_switches: (ps).voluntary_context_switches,
+                    involuntary_context_switches: (ps).involuntary_context_switches,
+                    proc_size: (ps).proc_size,
+                    proc_resident: (ps).proc_resident,
+                    start_time: chrono::Duration::seconds((ps).start_time),
+                    time_spent: chrono::Duration::seconds((ps).time_spent),
+                    cpu_percent: (ps).cpu_percent,
+                    nice: (ps).nice,
                     state,
-                    systime: chrono::Duration::seconds((*ps).systime),
+                    systime: chrono::Duration::seconds((ps).systime),
                 });
             }
         }
