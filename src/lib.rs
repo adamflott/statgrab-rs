@@ -754,8 +754,7 @@ mod tests {
     fn cpu_stats() {
         match init(true) {
             Ok(h) => {
-                let cs = h.get_cpu_stats();
-                assert!(cs.user >= 0);
+                let _cs = h.get_cpu_stats();
             }
             Err(e) => panic!("{:?}", e),
         }
