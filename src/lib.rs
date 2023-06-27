@@ -1,7 +1,7 @@
 use chrono::Duration;
 
 #[cfg(feature = "serde")]
-use serde::{Serialize, Deserialize};
+use serde::{Deserialize, Serialize};
 
 #[cfg(feature = "serde")]
 use serde_with::{serde_as, As, DurationSeconds};
@@ -86,9 +86,9 @@ pub struct HostInfo {
     pub host_state: HostState,
     pub ncpus: u32,
     pub maxcpus: u32,
-    #[cfg_attr(feature="serde", serde(with = "As::<DurationSeconds<f64>>"))]
+    #[cfg_attr(feature = "serde", serde(with = "As::<DurationSeconds<f64>>"))]
     pub uptime: Duration,
-    #[cfg_attr(feature="serde", serde(with = "As::<DurationSeconds<f64>>"))]
+    #[cfg_attr(feature = "serde", serde(with = "As::<DurationSeconds<f64>>"))]
     pub systime: Duration,
 }
 
@@ -108,7 +108,7 @@ pub struct CPUStats {
     pub syscalls: u64,
     pub interrupts: u64,
     pub soft_interrupts: u64,
-    #[cfg_attr(feature="serde", serde(with = "As::<DurationSeconds<f64>>"))]
+    #[cfg_attr(feature = "serde", serde(with = "As::<DurationSeconds<f64>>"))]
     pub systime: Duration,
 }
 
@@ -129,7 +129,7 @@ pub struct CPUPercents {
     pub iowait: f64,
     pub swap: f64,
     pub nice: f64,
-    #[cfg_attr(feature="serde", serde(with = "As::<DurationSeconds<f64>>"))]
+    #[cfg_attr(feature = "serde", serde(with = "As::<DurationSeconds<f64>>"))]
     pub time_taken: Duration,
 }
 
@@ -140,7 +140,7 @@ pub struct MemStats {
     pub free: u64,
     pub used: u64,
     pub cache: u64,
-    #[cfg_attr(feature="serde", serde(with = "As::<DurationSeconds<f64>>"))]
+    #[cfg_attr(feature = "serde", serde(with = "As::<DurationSeconds<f64>>"))]
     pub systime: Duration,
 }
 
@@ -150,7 +150,7 @@ pub struct LoadStats {
     pub min1: f64,
     pub min5: f64,
     pub min15: f64,
-    #[cfg_attr(feature="serde", serde(with = "As::<DurationSeconds<f64>>"))]
+    #[cfg_attr(feature = "serde", serde(with = "As::<DurationSeconds<f64>>"))]
     pub systime: Duration,
 }
 
@@ -163,9 +163,9 @@ pub struct UserStats {
     pub device: String,
     pub hostname: String,
     pub pid: i32, // TODO check if there is some appropriate for pid_t,
-    #[cfg_attr(feature="serde", serde(with = "As::<DurationSeconds<f64>>"))]
+    #[cfg_attr(feature = "serde", serde(with = "As::<DurationSeconds<f64>>"))]
     pub login_time: Duration,
-    #[cfg_attr(feature="serde", serde(with = "As::<DurationSeconds<f64>>"))]
+    #[cfg_attr(feature = "serde", serde(with = "As::<DurationSeconds<f64>>"))]
     pub systime: Duration,
 }
 
@@ -175,7 +175,7 @@ pub struct SwapStats {
     pub total: u64,
     pub used: u64,
     pub free: u64,
-    #[cfg_attr(feature="serde", serde(with = "As::<DurationSeconds<f64>>"))]
+    #[cfg_attr(feature = "serde", serde(with = "As::<DurationSeconds<f64>>"))]
     pub systime: Duration,
 }
 
@@ -213,7 +213,7 @@ pub struct FilesystemStats {
     pub free_blocks: u64,
     pub used_blocks: u64,
     pub avail_blocks: u64,
-    #[cfg_attr(feature="serde", serde(with = "As::<DurationSeconds<f64>>"))]
+    #[cfg_attr(feature = "serde", serde(with = "As::<DurationSeconds<f64>>"))]
     pub systime: Duration,
 }
 
@@ -223,7 +223,7 @@ pub struct DiskIOStats {
     pub disk_name: String,
     pub read_bytes: u64,
     pub write_bytes: u64,
-    #[cfg_attr(feature="serde", serde(with = "As::<DurationSeconds<f64>>"))]
+    #[cfg_attr(feature = "serde", serde(with = "As::<DurationSeconds<f64>>"))]
     pub systime: Duration,
 }
 
@@ -238,7 +238,7 @@ pub struct NetworkIOStats {
     pub ierrors: u64,
     pub oerrors: u64,
     pub collisions: u64,
-    #[cfg_attr(feature="serde", serde(with = "As::<DurationSeconds<f64>>"))]
+    #[cfg_attr(feature = "serde", serde(with = "As::<DurationSeconds<f64>>"))]
     pub systime: Duration,
 }
 
@@ -265,7 +265,7 @@ pub struct NetworkIfaceStats {
     pub factor: u64,
     pub duplex: IfaceDuplexType,
     pub up: IfaceUpdownType,
-    #[cfg_attr(feature="serde", serde(with = "As::<DurationSeconds<f64>>"))]
+    #[cfg_attr(feature = "serde", serde(with = "As::<DurationSeconds<f64>>"))]
     pub systime: Duration,
 }
 
@@ -274,7 +274,7 @@ pub struct NetworkIfaceStats {
 pub struct PageStats {
     pub pages_pagein: u64,
     pub pages_pageout: u64,
-    #[cfg_attr(feature="serde", serde(with = "As::<DurationSeconds<f64>>"))]
+    #[cfg_attr(feature = "serde", serde(with = "As::<DurationSeconds<f64>>"))]
     pub systime: Duration,
 }
 
@@ -306,14 +306,14 @@ pub struct ProcessStats {
     pub involuntary_context_switches: u64,
     pub proc_size: u64,
     pub proc_resident: u64,
-    #[cfg_attr(feature="serde", serde(with = "As::<DurationSeconds<f64>>"))]
+    #[cfg_attr(feature = "serde", serde(with = "As::<DurationSeconds<f64>>"))]
     pub start_time: Duration,
-    #[cfg_attr(feature="serde", serde(with = "As::<DurationSeconds<f64>>"))]
+    #[cfg_attr(feature = "serde", serde(with = "As::<DurationSeconds<f64>>"))]
     pub time_spent: Duration,
     pub cpu_percent: f64,
     pub nice: i32,
     pub state: ProcessState,
-    #[cfg_attr(feature="serde", serde(with = "As::<DurationSeconds<f64>>"))]
+    #[cfg_attr(feature = "serde", serde(with = "As::<DurationSeconds<f64>>"))]
     pub systime: Duration,
 }
 
@@ -332,7 +332,7 @@ pub struct ProcessCount {
     pub stopped: u64,
     pub zombie: u64,
     pub unknown: u64,
-    #[cfg_attr(feature="serde", serde(with = "As::<DurationSeconds<f64>>"))]
+    #[cfg_attr(feature = "serde", serde(with = "As::<DurationSeconds<f64>>"))]
     pub systime: Duration,
 }
 
