@@ -1,5 +1,11 @@
 use chrono::Duration;
 
+#[cfg(feature = "serde")]
+use serde::{Serialize, Deserialize};
+
+#[cfg(feature = "serde")]
+use serde_with::{serde_as, As, DurationSeconds};
+
 pub struct SGHandle {}
 
 #[derive(Debug, Clone)]
@@ -59,6 +65,7 @@ pub enum SGError {
 }
 
 #[derive(Debug, Clone)]
+#[cfg_attr(feature = "serde", derive(Deserialize, Serialize))]
 pub enum HostState {
     UnknownConfiguration,
     PhysicalHost,
@@ -67,6 +74,7 @@ pub enum HostState {
     HardwareVirtualized,
 }
 
+#[cfg_attr(feature = "serde", serde_as, derive(Deserialize, Serialize))]
 #[derive(Debug, Clone)]
 pub struct HostInfo {
     pub os_name: String,
@@ -78,10 +86,13 @@ pub struct HostInfo {
     pub host_state: HostState,
     pub ncpus: u32,
     pub maxcpus: u32,
+    #[cfg_attr(feature="serde", serde(with = "As::<DurationSeconds<f64>>"))]
     pub uptime: Duration,
+    #[cfg_attr(feature="serde", serde(with = "As::<DurationSeconds<f64>>"))]
     pub systime: Duration,
 }
 
+#[cfg_attr(feature = "serde", serde_as, derive(Deserialize, Serialize))]
 #[derive(Debug, Clone)]
 pub struct CPUStats {
     pub user: u64,
@@ -97,16 +108,19 @@ pub struct CPUStats {
     pub syscalls: u64,
     pub interrupts: u64,
     pub soft_interrupts: u64,
+    #[cfg_attr(feature="serde", serde(with = "As::<DurationSeconds<f64>>"))]
     pub systime: Duration,
 }
 
 #[derive(Debug, Clone)]
+#[cfg_attr(feature = "serde", derive(Deserialize, Serialize))]
 pub enum CPUPercentSource {
     EntireCPUPercent,
     LastDiffCPUPercent,
     NewDiffCPUPercent,
 }
 
+#[cfg_attr(feature = "serde", serde_as, derive(Deserialize, Serialize))]
 #[derive(Debug, Clone)]
 pub struct CPUPercents {
     pub user: f64,
@@ -115,26 +129,32 @@ pub struct CPUPercents {
     pub iowait: f64,
     pub swap: f64,
     pub nice: f64,
+    #[cfg_attr(feature="serde", serde(with = "As::<DurationSeconds<f64>>"))]
     pub time_taken: Duration,
 }
 
+#[cfg_attr(feature = "serde", serde_as, derive(Deserialize, Serialize))]
 #[derive(Debug, Clone)]
 pub struct MemStats {
     pub total: u64,
     pub free: u64,
     pub used: u64,
     pub cache: u64,
+    #[cfg_attr(feature="serde", serde(with = "As::<DurationSeconds<f64>>"))]
     pub systime: Duration,
 }
 
+#[cfg_attr(feature = "serde", serde_as, derive(Deserialize, Serialize))]
 #[derive(Debug, Clone)]
 pub struct LoadStats {
     pub min1: f64,
     pub min5: f64,
     pub min15: f64,
+    #[cfg_attr(feature="serde", serde(with = "As::<DurationSeconds<f64>>"))]
     pub systime: Duration,
 }
 
+#[cfg_attr(feature = "serde", serde_as, derive(Deserialize, Serialize))]
 #[derive(Debug, Clone)]
 pub struct UserStats {
     pub login_name: String,
@@ -143,19 +163,24 @@ pub struct UserStats {
     pub device: String,
     pub hostname: String,
     pub pid: i32, // TODO check if there is some appropriate for pid_t,
+    #[cfg_attr(feature="serde", serde(with = "As::<DurationSeconds<f64>>"))]
     pub login_time: Duration,
+    #[cfg_attr(feature="serde", serde(with = "As::<DurationSeconds<f64>>"))]
     pub systime: Duration,
 }
 
+#[cfg_attr(feature = "serde", serde_as, derive(Deserialize, Serialize))]
 #[derive(Debug, Clone)]
 pub struct SwapStats {
     pub total: u64,
     pub used: u64,
     pub free: u64,
+    #[cfg_attr(feature="serde", serde(with = "As::<DurationSeconds<f64>>"))]
     pub systime: Duration,
 }
 
 #[derive(Debug, Clone)]
+#[cfg_attr(feature = "serde", derive(Deserialize, Serialize))]
 pub enum FilesystemDeviceType {
     Unknown,
     Regular,
@@ -166,6 +191,7 @@ pub enum FilesystemDeviceType {
     AllTypes,
 }
 
+#[cfg_attr(feature = "serde", serde_as, derive(Deserialize, Serialize))]
 #[derive(Debug, Clone)]
 pub struct FilesystemStats {
     pub device_name: String,
@@ -187,17 +213,21 @@ pub struct FilesystemStats {
     pub free_blocks: u64,
     pub used_blocks: u64,
     pub avail_blocks: u64,
+    #[cfg_attr(feature="serde", serde(with = "As::<DurationSeconds<f64>>"))]
     pub systime: Duration,
 }
 
+#[cfg_attr(feature = "serde", serde_as, derive(Deserialize, Serialize))]
 #[derive(Debug, Clone)]
 pub struct DiskIOStats {
     pub disk_name: String,
     pub read_bytes: u64,
     pub write_bytes: u64,
+    #[cfg_attr(feature="serde", serde(with = "As::<DurationSeconds<f64>>"))]
     pub systime: Duration,
 }
 
+#[cfg_attr(feature = "serde", serde_as, derive(Deserialize, Serialize))]
 #[derive(Debug, Clone)]
 pub struct NetworkIOStats {
     pub interface_name: String,
@@ -208,10 +238,12 @@ pub struct NetworkIOStats {
     pub ierrors: u64,
     pub oerrors: u64,
     pub collisions: u64,
+    #[cfg_attr(feature="serde", serde(with = "As::<DurationSeconds<f64>>"))]
     pub systime: Duration,
 }
 
 #[derive(Debug, Clone)]
+#[cfg_attr(feature = "serde", derive(Deserialize, Serialize))]
 pub enum IfaceDuplexType {
     Full,
     Half,
@@ -219,11 +251,13 @@ pub enum IfaceDuplexType {
 }
 
 #[derive(Debug, Clone)]
+#[cfg_attr(feature = "serde", derive(Deserialize, Serialize))]
 pub enum IfaceUpdownType {
     Down,
     Up,
 }
 
+#[cfg_attr(feature = "serde", serde_as, derive(Deserialize, Serialize))]
 #[derive(Debug, Clone)]
 pub struct NetworkIfaceStats {
     pub interface_name: String,
@@ -231,17 +265,21 @@ pub struct NetworkIfaceStats {
     pub factor: u64,
     pub duplex: IfaceDuplexType,
     pub up: IfaceUpdownType,
+    #[cfg_attr(feature="serde", serde(with = "As::<DurationSeconds<f64>>"))]
     pub systime: Duration,
 }
 
+#[cfg_attr(feature = "serde", serde_as, derive(Deserialize, Serialize))]
 #[derive(Debug, Clone)]
 pub struct PageStats {
     pub pages_pagein: u64,
     pub pages_pageout: u64,
+    #[cfg_attr(feature="serde", serde(with = "As::<DurationSeconds<f64>>"))]
     pub systime: Duration,
 }
 
 #[derive(Debug, Clone)]
+#[cfg_attr(feature = "serde", derive(Deserialize, Serialize))]
 pub enum ProcessState {
     Running,
     Sleeping,
@@ -250,6 +288,7 @@ pub enum ProcessState {
     Unknown,
 }
 
+#[cfg_attr(feature = "serde", serde_as, derive(Deserialize, Serialize))]
 #[derive(Debug, Clone)]
 pub struct ProcessStats {
     pub process_name: String,
@@ -267,19 +306,24 @@ pub struct ProcessStats {
     pub involuntary_context_switches: u64,
     pub proc_size: u64,
     pub proc_resident: u64,
+    #[cfg_attr(feature="serde", serde(with = "As::<DurationSeconds<f64>>"))]
     pub start_time: Duration,
+    #[cfg_attr(feature="serde", serde(with = "As::<DurationSeconds<f64>>"))]
     pub time_spent: Duration,
     pub cpu_percent: f64,
     pub nice: i32,
     pub state: ProcessState,
+    #[cfg_attr(feature="serde", serde(with = "As::<DurationSeconds<f64>>"))]
     pub systime: Duration,
 }
 
+#[cfg_attr(feature = "serde", derive(Deserialize, Serialize))]
 pub enum ProcessCountSource {
     Entire,
     Last,
 }
 
+#[cfg_attr(feature = "serde", serde_as, derive(Deserialize, Serialize))]
 #[derive(Debug, Clone)]
 pub struct ProcessCount {
     pub total: u64,
@@ -288,6 +332,7 @@ pub struct ProcessCount {
     pub stopped: u64,
     pub zombie: u64,
     pub unknown: u64,
+    #[cfg_attr(feature="serde", serde(with = "As::<DurationSeconds<f64>>"))]
     pub systime: Duration,
 }
 
